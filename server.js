@@ -68,7 +68,11 @@ app.get('/order', (req, res) => {
         });
         res.send(template);
 
-})
+});
+
+app.get('/profile', (req,res) => {
+    res.send("Profile page will be soon added!");
+});
 
 app.listen(3000, () => {
     console.log(`Server started by address: http://localhost:3000`);
