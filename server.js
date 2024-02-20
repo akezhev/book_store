@@ -34,15 +34,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/bootstrap.css', (req, res) => {
-
     res.sendFile(path.join(__dirname, "node_modules/bootstrap/dist/css/bootstrap.min.css"));
 });
-
-app.get('/bootstrap.js', (req, res) => {
-
-    res.sendFile(path.join(__dirname, "node_modules/bootstrap/dist/js/bootstrap.min.js"));
-});
-
 
 app.post('/buy', (req, res) => {
     //     res.send("Покупка прошла успешно!");
@@ -72,6 +65,10 @@ app.get('/order', (req, res) => {
 
 app.get('/profile', (req,res) => {
     res.send("Profile page will be soon added!");
+});
+
+app.get('/icons.css', (req, res) => {
+    res.sendFile(path.join(__dirname, "node_modules/bootstrap-icons/font/bootsrap-icons.min.css"));
 });
 
 app.listen(3000, () => {
