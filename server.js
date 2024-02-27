@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const pug = require('pug');
 const fs = require("fs");
+const bodyParser = require('body-parser');
 
 function error_log(err) {
     let d = new Date();
@@ -12,6 +13,7 @@ function error_log(err) {
 
 const app = express();
 app.use('/media', express.static('media'));
+app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
     fs.readFile("books.json", (err, data) => {
@@ -33,24 +35,11 @@ app.get('/', (req, res) => {
 
 });
 
-app.get('/bootstrap.css', (req, res) => {
-    res.sendFile(path.join(__dirname, "node_modules/bootstrap/dist/css/bootstrap.min.css"));
-});
 
+// добавление книги в корзину
+// @param {Request} req
 app.post('/buy', (req, res) => {
-    //     res.send("Покупка прошла успешно!");
-    // });
-
-    // app.get('/success', (req, res) => {
-    //res.sendFile(path.join(__dirname, "views", "thankyoupage.html"));
-    res.send(
-        pug.renderFile(path.join(__dirname, "views", "thankyoupage.html"), {
-            username: "John",
-            bookname: "Lord of rings",
-            date: "12.03.2024",
-            address: "Moscow, Kreml"
-        })
-    );
+    res.send(req.body);
 });
 
 app.get('/order', (req, res) => {
@@ -66,6 +55,8 @@ app.get('/order', (req, res) => {
 app.get('/profile', (req,res) => {
     res.send("Profile page will be soon added!");
 });
+
+
 
 app.get('/icons.css', (req, res) => {
     res.sendFile(path.join(__dirname, "node_modules/bootstrap-icons/font/bootsrap-icons.min.css"));
