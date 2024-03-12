@@ -1,0 +1,15 @@
+extends main.pug
+
+block content
+    <main class="container mt-3 col border rounded p-3">
+        <form class="container m-5" method="post" action="/auth">
+            <img>
+            <label for="name">Name: </label>
+            <input type="text" name="name" placeholder="Иван Иванов" id="name">
+            <label for="adress">Adress: </label>
+            <input type="text" adress='adress' placeholder='Krasnodar, Komunarov street, 168' id='adress'>
+            <label for="mail">Mail: </label>
+            <input type="text" mail="mail" placeholder="mazafaka@mail.ru" id="mail">
+
+        </form>
+    </main>

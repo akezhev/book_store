@@ -4,8 +4,8 @@ const pug = require('pug');
 const fs = require("fs");
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const auth = require('auth');
-
+const redis = require('redis');
+const RedisStore = require('connect-redis').default
 
 function error_log(err) {
     let d = new Date();
@@ -14,15 +14,29 @@ function error_log(err) {
     console.log(err);
 }
 
+// настройка клиент Redis
+const redisClient = redis.createClient({
+    host: '127.0.0.1',
+    port: 6379
+});
+redisClient.connect().catch(console.error);
+
+// создание хранилища
+let redisStore = new RedisStore({
+    client: redisClient,
+    prefix: "bookshop:",
+});
+
 const app = express();
+app.set('view engine', 'pug');
 app.use('/media', express.static('media'));
 app.use(bodyParser.json());
-app.set('trust proxy', 1);
 app.use(session({
+    store: redisStore,
     secret: 'j46eMKWwUFn3aWE252*Q24Y4XqKAGSGS',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }
+    cookie: { secure: false }
   }));
 
 app.get('/', (req, res) => {
@@ -37,12 +51,9 @@ app.get('/', (req, res) => {
                 cards: JSON.parse(data),
                 page: "main"
             }
-
         )
         res.send(template);
-
     })
-
 });
 
 
@@ -67,16 +78,17 @@ app.post('/buy', (req, res) => {
     // const expires = d.toUTCString();
     // res.setHeader("Set-Cookie", "user=" + userId + "; expires=" + expires);
     // res.send(req.body);
-  
-    req.session.book_id = req.body.book_id;
-    console.log(req.session);
+    
+    if (!req.session.books) {
+        req.session.books = { [req.body.book_id]: 1 };
+    } else {
+        req.session.books[req.body.book_id] = 1;
+    }
     res.sendStatus(200);
 });
 
 app.get('/auth', (req, res) => {
-    let filepath = path.join(__dirname, "views", "auth.pug");
-    let template = pug.renderFile(filepath, {page: "auth"});
-    res.send(template);
+    res.render('auth', { page: 'auth' });
 });
 
 app.post('/auth', (req, res) => {
@@ -94,7 +106,7 @@ app.get('/order', (req, res) => {
 });
 
 app.get('/profile', (req,res) => {
-    res.send("Profile page will be soon added!");
+    res.render('profile');
 });
 
 app.get('/icons.css', (req, res) => {
